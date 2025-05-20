@@ -1,82 +1,101 @@
 # ⚡ COMSOL Simulation: Cellular Response to Electrical Stimulation
 
-This COMSOL-based project simulates how an isolated biological cell responds to various forms of electrical stimulation. It incorporates both stationary and time-dependent studies to model intracellular and extracellular potentials, as well as the transmembrane voltage (Vm), under controlled current injection and external electric fields.
+This project uses COMSOL to simulate the electrical behavior of a biological cell subjected to current injection and electric field stimulation. The study models both stationary and time-dependent voltage responses, capturing intracellular potential (Vi), extracellular potential (Ve), and transmembrane voltage (Vm) under various biophysical conditions.
 
 ---
 
-## 🧪 Project Summary
+## 🧬 Simulation Summary
 
-### Key Goals
-- Model steady-state and dynamic voltage distributions across a cell membrane
-- Analyze effects of current injection vs. external field stimulation
-- Visualize spatial and temporal profiles of Vi, Ve, and Vm
-- Study response sensitivity to biophysical parameters
-
-### Cell & Medium
-- 2D circular cell (radius = 50 μm) in saline bath (4 mm x 4 mm)
-- Material domains:
-  - Cytoplasm (cell interior)
-  - Saline (bath)
-  - Cell membrane (boundary with contact impedance)
+- **Geometry**: 2D circular cell (radius = 50 μm) in a saline bath (4 mm × 4 mm)
+- **Materials**: 
+  - Saline for bath
+  - Cytoplasm for cell interior
+  - Membrane with RC model (contact impedance):  
+    Rs = 2.5 kΩ·cm², Cs = 1 μF/cm²
+- **Stimulus**: 
+  - Current source: 0.5 μA/cm
+  - External E-field: ±1 V at bath edges
 
 ---
 
-## ⚙️ Simulation Components
+## 🧪 Key Results
 
-### 1️⃣ Stationary Response – Current Injection
-- Line current source at center (0,0) with 0.5 μA/cm
-- Membrane impedance:  
-  - Resistance: 2.5 kΩ·cm²  
-  - Capacitance: 1 μF/cm²
-- Mesh: Extra fine
+### 🔁 Part 1: Stationary Current Injection (Centered)
 
-📊 **Outputs**:
-- Electric potential and streamlines (Vi, Ve)
-- Transmembrane voltage Vm (Vi - Ve) as a function of polar angle θ
+📸 **Electric Potential & Streamlines**
+- Shown in: Fig 1: Vi and Current Streamlines
 
-📈 `Fig. 1 & Fig. 2`: Symmetric and asymmetric injection patterns
+> The intracellular potential (Vi) forms a radial gradient. Streamlines represent outward current flow from a central injection source — consistent with monopolar symmetry.
 
----
+📈 **Transmembrane Profile (Vi, Ve, Vm)**
 
-### 2️⃣ Time-Dependent Study
-- Stimulus repositioned to (0.75rc, 0)
-- Time-dependent solution from 0–20 ms in 2 ms steps, refined down to 0.0002 ms resolution
+- Vi ≈ 40 mV (flat across angles)
+- Ve ≈ 0 mV (near grounded)
+- Vm ≈ 40 mV (uniform)
 
-📈 `Fig. 3 & Fig. 4`: Temporal evolution of Vi, Ve, and Vm
+- Fig 2: Vi, Ve, Vm vs θ
 
-📌 **Vm Threshold Test**:  
-How long does it take for Vm to reach +15 mV?  
-→ Extracted from `HW6-Vm(t).xlsx`
-
-🎞️ `HW6-Movie-1.gif`: Animation of Vm evolution over time (2 fps)
+> Confirms radial symmetry and validates the boundary conditions.
 
 ---
 
-### 3️⃣ External Electric Field Stimulation
+### 🔄 Part 2: Asymmetric Injection (Off-center Stimulus)
 
-- Field applied via ±1 V on opposing bath walls
-- Line current source disabled
-- Cell remains centered in bath
+- Stimulus moved to (0.75 rc, 0)
 
-📈 `Fig. 5 & Fig. 6`:  
-- Immediate steady-state observed  
-- Vm ≠ Vi due to differing boundary conditions  
-- Large sinusoidal variation in all signals
+Shown in : Movie-1.gif
+
+> Dynamic asymmetry develops in Vi and Vm. The membrane voltage still peaks around the source side, but becomes angularly asymmetric.
+
+📊 Extracted time series:  
+See `Vm(t)_data.xlsx` to find pulse width for Vm to reach +15 mV.
+
+**Result**: ~4.2 ms (from the data)
 
 ---
 
-## 🔁 Parametric Studies
+### ⏱️ Part 3: Time-Dependent Voltage Evolution
 
-### Part 5: Biophysical Variations
+#### Low Temporal Resolution (2 ms steps)
 
-| Condition | Change | Observation |
-|----------|--------|-------------|
-| Membrane R ↑ ×10 | Slower Vm rise | Increased time constant |
-| Medium resistivity ↑ ×10 | Slower Vm change | Less current flow |
-| Current source external | (2rc, 0) | Vm spatial profile shifts |  
-| External field vs. current injection | Field → instant response | Vm shape varies |
+- Smooth ramp-up of Vm
+- Temporal rise visible but not sharply resolved
 
-All results shown in `Fig. 7–10`.
+#### High Temporal Resolution (0.2 ms, 0.02 ms, 0.002 ms)
+
+- Shown in: Fig 6 Panels A–F
+
+> Finer steps reveal fast initial dynamics. Membrane potential Vm rises sharply then levels off — consistent with RC charging behavior.
+
+---
+
+### 🌐 Part 4: Electric Field Stimulation
+
+- External ±1 V applied at bath walls
+- Instant polarization with field distortion
+
+#### Vi, Ve, Vm respond instantly:
+> Vm ≠ Vi due to field coupling across membrane
+
+#### Electric field amplification at poles:
+
+- Shown in: Fig 5A: Vi Field Distortion
+- SHown in: Fig 5B: Field Intensity Map
+
+> Electric field lines focus near the membrane poles due to dielectric mismatch.
+
+---
+
+### ⚗️ Part 5: Parameter Sensitivity Experiments
+
+| Experiment | Change | Result |
+|-----------|--------|--------|
+| **a)** Membrane R ×10 | Slower Vm rise | Larger time constant |
+| **b)** Saline & cytoplasm resistivity ×10 | Slower dynamics | Same final Vm |
+| **c)** Current injection + R ×10 | Sharper Vm spike | Higher peak |
+| **d)** Injection + medium resistivity ×10 | Minimal Vm change | Membrane dominates |
+
+📈 All shown in `Fig. 7–10`
 
 ---
 
@@ -84,20 +103,20 @@ All results shown in `Fig. 7–10`.
 
 | File | Description |
 |------|-------------|
-| `HW6-COMSOL.mph` | Main model (all parts) |
-| `HW6-Vm(t).xlsx` | Vm time series from transient study |
-| `HW6-Movie-1.gif` | Animated potential evolution |
-| `Bhatt-HW6-Doc.pdf` | Final report with figures and conclusions |
+| `COMSOL.mph` | COMSOL model with all studies |
+| `Movie-1.gif` | Dynamic Vi + streamline animation |
+| `Vm(t)_data.xlsx` | Time series data for threshold analysis |
+| `Supplement-Doc.pdf` | Experimental commentary and figure callouts |
 
 ---
 
-## 📌 Key Learning Points
+## 🧠 Scientific Takeaways
 
-- Transmembrane voltage arises from differences in inner and outer potentials
-- Vm builds slower under current injection than with external field
-- Changing membrane or medium properties directly affects time constants
-- Vm can be extracted using COMSOL's curve + dataset join tools
-- Visualization of streamlines and spatial profiles aids understanding of cell polarization
+- **Vm arises from Vi – Ve** and is sensitive to boundary location and symmetry
+- **RC time constants** govern rise times during stimulation
+- **Field stimulation** causes nearly instant changes — unlike current injection
+- **Membrane resistance** strongly modulates both peak amplitude and dynamics
+- **Medium resistivity** has less effect under current injection than under field
 
 ---
 
